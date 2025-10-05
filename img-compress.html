@@ -8,6 +8,7 @@
     <meta name="keywords" content="best free image compressor, online image compressor, Pixlah image optimizer, image compression, reduce image size, image optimizer">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/compressorjs/1.1.1/compressor.min.js"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-app-pub-9972622069269331" crossorigin="anonymous"></script>
     <style>
         :root {
             --primary: #4361ee;
@@ -418,13 +419,47 @@
         }
 
         .adsense-placeholder {
-            background: #e9ecef;
-            height: 90px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin: 20px 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 10px;
-            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .adsense-banner {
+            width: 100%;
+            max-width: 728px;
+            height: 90px;
+            margin: 0 auto;
+        }
+
+        .adsense-sidebar {
+            width: 300px;
+            height: 600px;
+            margin: 0 auto;
+        }
+
+        .adsense-in-article {
+            width: 100%;
+            max-width: 728px;
+            height: 90px;
+            margin: 20px auto;
+        }
+
+        .sidebar-container {
+            display: flex;
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .main-content {
+            flex: 1;
+        }
+
+        .sidebar {
+            width: 300px;
         }
 
         /* Footer */
@@ -545,6 +580,16 @@
             nav ul {
                 gap: 20px;
             }
+            
+            .sidebar-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+            }
         }
 
         @media (max-width: 768px) {
@@ -593,6 +638,10 @@
             .image-preview {
                 flex-direction: column;
             }
+            
+            .adsense-banner, .adsense-in-article {
+                height: 90px;
+            }
         }
 
         @media (max-width: 576px) {
@@ -610,6 +659,10 @@
             
             .feature-card {
                 padding: 20px;
+            }
+            
+            .adsense-banner, .adsense-in-article {
+                height: 90px;
             }
         }
     </style>
@@ -646,10 +699,16 @@
         </div>
     </section>
 
-    <!-- AdSense Section -->
+    <!-- AdSense Banner Below Header -->
     <div class="container adsense-section">
         <div class="adsense-placeholder">
-            Google AdSense Banner (728x90)
+            <!-- AdSense Banner Ad -->
+            <ins class="adsbygoogle adsense-banner"
+                 style="display:block"
+                 data-ad-client="ca-app-pub-9972622069269331"
+                 data-ad-slot="8767541293"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
         </div>
     </div>
 
@@ -660,59 +719,90 @@
                 <h2>Image Compressor</h2>
                 <p>Upload your image and compress it in seconds. Our algorithm ensures minimal quality loss while maximizing file size reduction.</p>
             </div>
-            <div class="compressor-container">
-                <div class="upload-area" id="upload-area">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                    <h3>Upload Your Image</h3>
-                    <p>Drag & drop your image here or click to browse</p>
-                    <p>Supports JPG, PNG, GIF, WebP (Max 10MB)</p>
-                    <input type="file" id="file-input" accept="image/*">
+            
+            <div class="sidebar-container">
+                <div class="main-content">
+                    <div class="compressor-container">
+                        <div class="upload-area" id="upload-area">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <h3>Upload Your Image</h3>
+                            <p>Drag & drop your image here or click to browse</p>
+                            <p>Supports JPG, PNG, GIF, WebP (Max 10MB)</p>
+                            <input type="file" id="file-input" accept="image/*">
+                        </div>
+                        
+                        <button class="compress-btn" id="compress-btn" disabled>Compress Image</button>
+                        
+                        <div class="progress-container" id="progress-container">
+                            <div class="progress-bar">
+                                <div class="progress" id="progress"></div>
+                            </div>
+                            <p id="progress-text">Compressing... 0%</p>
+                        </div>
+                        
+                        <div class="result-container" id="result-container">
+                            <h3>Compression Complete!</h3>
+                            
+                            <div class="image-preview">
+                                <div class="preview-container">
+                                    <img id="original-preview" src="" alt="Original Image">
+                                    <p>Original Image</p>
+                                </div>
+                                <div class="preview-container">
+                                    <img id="compressed-preview" src="" alt="Compressed Image">
+                                    <p>Compressed Image</p>
+                                </div>
+                            </div>
+                            
+                            <div class="result-info">
+                                <div class="result-item">
+                                    <h4>Original Size</h4>
+                                    <p id="original-size">0 KB</p>
+                                </div>
+                                <div class="result-item">
+                                    <h4>Compressed Size</h4>
+                                    <p id="compressed-size">0 KB</p>
+                                </div>
+                                <div class="result-item">
+                                    <h4>Reduction</h4>
+                                    <p id="reduction">0%</p>
+                                </div>
+                            </div>
+                            <a href="#" class="download-btn" id="download-btn">
+                                <i class="fas fa-download"></i> Download Compressed Image
+                            </a>
+                        </div>
+                    </div>
                 </div>
                 
-                <button class="compress-btn" id="compress-btn" disabled>Compress Image</button>
-                
-                <div class="progress-container" id="progress-container">
-                    <div class="progress-bar">
-                        <div class="progress" id="progress"></div>
+                <!-- Sidebar Ad -->
+                <div class="sidebar">
+                    <div class="adsense-placeholder">
+                        <!-- AdSense Sidebar Ad -->
+                        <ins class="adsbygoogle adsense-sidebar"
+                             style="display:block"
+                             data-ad-client="ca-app-pub-9972622069269331"
+                             data-ad-slot="8767541293"
+                             data-ad-format="auto"
+                             data-full-width-responsive="true"></ins>
                     </div>
-                    <p id="progress-text">Compressing... 0%</p>
-                </div>
-                
-                <div class="result-container" id="result-container">
-                    <h3>Compression Complete!</h3>
-                    
-                    <div class="image-preview">
-                        <div class="preview-container">
-                            <img id="original-preview" src="" alt="Original Image">
-                            <p>Original Image</p>
-                        </div>
-                        <div class="preview-container">
-                            <img id="compressed-preview" src="" alt="Compressed Image">
-                            <p>Compressed Image</p>
-                        </div>
-                    </div>
-                    
-                    <div class="result-info">
-                        <div class="result-item">
-                            <h4>Original Size</h4>
-                            <p id="original-size">0 KB</p>
-                        </div>
-                        <div class="result-item">
-                            <h4>Compressed Size</h4>
-                            <p id="compressed-size">0 KB</p>
-                        </div>
-                        <div class="result-item">
-                            <h4>Reduction</h4>
-                            <p id="reduction">0%</p>
-                        </div>
-                    </div>
-                    <a href="#" class="download-btn" id="download-btn">
-                        <i class="fas fa-download"></i> Download Compressed Image
-                    </a>
                 </div>
             </div>
         </div>
     </section>
+
+    <!-- In-Article Ad -->
+    <div class="container adsense-section">
+        <div class="adsense-placeholder">
+            <!-- AdSense In-Article Ad -->
+            <ins class="adsbygoogle adsense-in-article"
+                 style="display:block"
+                 data-ad-client="ca-app-pub-9972622069269331"
+                 data-ad-slot="8767541293"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+        </div>
+    </div>
 
     <!-- Features Section -->
     <section class="features" id="features">
@@ -768,10 +858,16 @@
         </div>
     </section>
 
-    <!-- AdSense Section -->
+    <!-- Footer Ad -->
     <div class="container adsense-section">
         <div class="adsense-placeholder">
-            Google AdSense Rectangle (300x250)
+            <!-- AdSense Footer Ad -->
+            <ins class="adsbygoogle adsense-banner"
+                 style="display:block"
+                 data-ad-client="ca-app-pub-9972622069269331"
+                 data-ad-slot="8767541293"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
         </div>
     </div>
 
@@ -996,6 +1092,9 @@
                 alert('Share this link: ' + window.location.href);
             }
         });
+
+        // Initialize AdSense ads
+        (adsbygoogle = window.adsbygoogle || []).push({});
     </script>
 </body>
 </html>
