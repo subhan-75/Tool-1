@@ -7,6 +7,7 @@
     <meta name="description" content="Compress your images online with Pixlah - the best free image compressor that reduces file size while maintaining clarity and resolution. Try our image optimizer today!">
     <meta name="keywords" content="best free image compressor, online image compressor, Pixlah image optimizer, image compression, reduce image size, image optimizer">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/compressorjs/1.1.1/compressor.min.js"></script>
     <style>
         :root {
             --primary: #4361ee;
@@ -341,6 +342,32 @@
             box-shadow: 0 7px 15px rgba(67, 97, 238, 0.4);
         }
 
+        .image-preview {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .preview-container {
+            text-align: center;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .preview-container img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .preview-container p {
+            margin-top: 10px;
+            font-weight: 500;
+        }
+
         /* Features Section */
         .features {
             padding: 100px 0;
@@ -562,6 +589,10 @@
                 flex-direction: column;
                 gap: 15px;
             }
+            
+            .image-preview {
+                flex-direction: column;
+            }
         }
 
         @media (max-width: 576px) {
@@ -649,6 +680,18 @@
                 
                 <div class="result-container" id="result-container">
                     <h3>Compression Complete!</h3>
+                    
+                    <div class="image-preview">
+                        <div class="preview-container">
+                            <img id="original-preview" src="" alt="Original Image">
+                            <p>Original Image</p>
+                        </div>
+                        <div class="preview-container">
+                            <img id="compressed-preview" src="" alt="Compressed Image">
+                            <p>Compressed Image</p>
+                        </div>
+                    </div>
+                    
                     <div class="result-info">
                         <div class="result-item">
                             <h4>Original Size</h4>
@@ -820,8 +863,11 @@
         const compressedSize = document.getElementById('compressed-size');
         const reduction = document.getElementById('reduction');
         const downloadBtn = document.getElementById('download-btn');
+        const originalPreview = document.getElementById('original-preview');
+        const compressedPreview = document.getElementById('compressed-preview');
 
         let selectedFile = null;
+        let compressedFile = null;
 
         // Upload area click event
         uploadArea.addEventListener('click', () => {
@@ -855,6 +901,16 @@
                 
                 // Enable compress button
                 compressBtn.disabled = false;
+                
+                // Reset result container
+                resultContainer.style.display = 'none';
+                
+                // Create preview of original image
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    originalPreview.src = e.target.result;
+                };
+                reader.readAsDataURL(selectedFile);
             }
         });
 
@@ -866,43 +922,63 @@
             progressContainer.style.display = 'block';
             resultContainer.style.display = 'none';
             
-            // Simulate compression progress
+            // Reset progress
+            progress.style.width = '0%';
+            progressText.textContent = 'Compressing... 0%';
+            
+            // Use compressorjs to compress the image
+            new Compressor(selectedFile, {
+                quality: 0.6,
+                maxWidth: 1920,
+                maxHeight: 1080,
+                success: (result) => {
+                    compressedFile = result;
+                    
+                    // Create preview of compressed image
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        compressedPreview.src = e.target.result;
+                        
+                        // Calculate compression results
+                        const originalFileSize = selectedFile.size;
+                        const compressedFileSize = compressedFile.size;
+                        const reductionPercentage = ((originalFileSize - compressedFileSize) / originalFileSize * 100).toFixed(1);
+                        
+                        // Update result elements
+                        originalSize.textContent = `${(originalFileSize / 1024).toFixed(2)} KB`;
+                        compressedSize.textContent = `${(compressedFileSize / 1024).toFixed(2)} KB`;
+                        reduction.textContent = `${reductionPercentage}%`;
+                        
+                        // Set up download button
+                        downloadBtn.href = URL.createObjectURL(compressedFile);
+                        downloadBtn.download = `compressed-${selectedFile.name}`;
+                        
+                        // Hide progress and show result
+                        progressContainer.style.display = 'none';
+                        resultContainer.style.display = 'block';
+                    };
+                    reader.readAsDataURL(compressedFile);
+                },
+                error: (err) => {
+                    console.error('Compression error:', err);
+                    alert('An error occurred during compression. Please try again.');
+                    progressContainer.style.display = 'none';
+                }
+            });
+            
+            // Simulate progress for better UX
             let progressValue = 0;
             const interval = setInterval(() => {
-                progressValue += Math.random() * 10;
-                if (progressValue >= 100) {
-                    progressValue = 100;
+                progressValue += Math.random() * 15;
+                if (progressValue >= 90) {
+                    progressValue = 90;
                     clearInterval(interval);
-                    
-                    // Show result after compression is "complete"
-                    setTimeout(showCompressionResult, 500);
                 }
                 
                 progress.style.width = `${progressValue}%`;
                 progressText.textContent = `Compressing... ${Math.round(progressValue)}%`;
             }, 200);
         });
-
-        // Show compression result
-        function showCompressionResult() {
-            // Calculate "compressed" size (random reduction between 40% and 80%)
-            const originalFileSize = selectedFile.size;
-            const reductionPercentage = 40 + Math.random() * 40;
-            const compressedFileSize = originalFileSize * (1 - reductionPercentage / 100);
-            
-            // Update result elements
-            originalSize.textContent = `${(originalFileSize / 1024).toFixed(2)} KB`;
-            compressedSize.textContent = `${(compressedFileSize / 1024).toFixed(2)} KB`;
-            reduction.textContent = `${reductionPercentage.toFixed(1)}%`;
-            
-            // Hide progress and show result
-            progressContainer.style.display = 'none';
-            resultContainer.style.display = 'block';
-            
-            // Set up download button (in a real app, this would download the actual compressed file)
-            downloadBtn.href = URL.createObjectURL(selectedFile);
-            downloadBtn.download = `compressed-${selectedFile.name}`;
-        }
 
         // Share button functionality
         document.querySelector('.share-btn').addEventListener('click', function(e) {
